@@ -23,7 +23,7 @@
   },
   "nodemonConfig": {
     "ignore": [
-    "data.json"
+      "data.json"
     ]
-    } 
+  }
 }

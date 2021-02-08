@@ -1,5 +1,7 @@
 // Vereinheitlicht Datenbank
 const db = require('../db');
+// importiere das Model für records: 
+const Record = require('../models/recordmodel')
 
 exports.recordsGetAllController = (req, res, next) => {
 	//res.send('ich zeige alle Produkte des Ladens als Array');
@@ -8,18 +10,18 @@ exports.recordsGetAllController = (req, res, next) => {
 		.value()
 	res.status(200).send(aufnahmen);
 }
+// Speichert im MongoDB mit der save Methode, mit async await. 
 
-exports.recordsPostController = (req, res, next) => {
-	//res.send("Eine neue Aufnahme im Bestand speichern.")
-	const aufnahme = req.body;
-	db
-		.get('records')
-		.push(aufnahme)
-		.last()
-		// Ich mach aus dem aktuellen Datum eine eindeutige ID für den Eintrag
-		.assign({ id: Date.now().toString() })
-		.write()
-	res.status(200).send(aufnahme);
+exports.recordsPostController = async (req, res, next) => {
+	try {
+		const aufnahme = new Record(req.body)
+		await aufnahme.save()
+		// Hier ersetze ich die Speicherung in lowdb mit MongoDB
+		// wir verwenden mongoose
+		res.status(200).send(aufnahme);
+	} catch (fehler) {
+		next(fehler)
+	}
 }
 
 exports.recordsGetOneController = (req, res, next) => {
