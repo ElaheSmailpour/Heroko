@@ -10,23 +10,8 @@ exports.recordsGetAllController = (req, res, next) => {
 		.value()
 	res.status(200).send(aufnahmen);
 }
-// Speichert im MongoDB mit der save Methode, mit async await. 
-
-exports.recordsPostController = async (req, res, next) => {
-	try {
-		const aufnahme = new Record(req.body)
-		await aufnahme.save()
-		// Hier ersetze ich die Speicherung in lowdb mit MongoDB
-		// wir verwenden mongoose
-		res.status(200).send(aufnahme);
-	} catch (fehler) {
-		next(fehler)
-	}
-}
 
 exports.recordsGetOneController = (req, res, next) => {
-	// das Segment nach /records/ ist meine ID zum ändern
-	// z.b: localhost:3001/records/1235 => req.params.id = 1235
 	const { id } = req.params;
 	const record = db
 		.get('records')
@@ -34,13 +19,19 @@ exports.recordsGetOneController = (req, res, next) => {
 	res
 		.status(200)
 		.send(record);
+}
 
-	//res.send('gebe nur das eine Album zurück mit ID:' + id);
+// arbeitet schon mit Mongoose:
+exports.recordsPostController = async (req, res, next) => {
+	try {
+		const aufnahme = await Record.create(req.body)
+		res.status(200).send(aufnahme);
+	} catch (fehler) {
+		next(fehler)
+	}
 }
 
 exports.recordsPutController = (req, res, next) => {
-	// das Segment nach /records/ ist meine ID zum ändern
-	// z.b: localhost:3001/records/1235 => req.params.id = 1235
 	const { id } = req.params;
 
 	const geänderteWerte = req.body;
@@ -50,9 +41,6 @@ exports.recordsPutController = (req, res, next) => {
 		.assign(geänderteWerte)
 		.write();
 	res.status(200).send(Aufnahme);
-
-	//res.send('ich ändere das Album mit ID:' + id);
-
 }
 
 exports.recordsDeleteController = (req, res, next) => {
@@ -63,5 +51,4 @@ exports.recordsDeleteController = (req, res, next) => {
 		.remove({ id })
 		.write();
 	res.status(200).send(record);
-	//res.send('ich lösche die Aufnahme mit ID:' + id);
 }
