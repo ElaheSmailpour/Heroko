@@ -8,10 +8,16 @@ const {
 router
     .route('/')
         .get(alleNutzer)
-        .post(erstelleNutzer);
+        .post(erstelleNutzer)
+        .put((req,res,next) => {
+          res.status(422).send("bitte PUT auf /users/ nur mit _id");
+        })
+        .delete((req,res,next) => {
+          res.status(422).send("bitte DELETE auf /users/ nur mit _id");
+        })
 
 router
-    .route('/:nutzerID')
+    .route('/:_id')
         .get(einNutzer)
         .put(aktualisiereNutzer)
         .delete(löscheNutzer);
