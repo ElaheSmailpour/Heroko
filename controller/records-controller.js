@@ -37,10 +37,10 @@ exports.recordsPostController = async (req, res, next) => {
 			return res.status(422).json({
 				fehlerBeiValidierung: errors.array() 
 			})
-		} else {
-			const aufnahme = await Record.create(req.body)
-			res.status(200).send(aufnahme);
-		}
+		} 
+		const aufnahme = await Record.create(req.body)
+		res.status(200).send(aufnahme);
+		
 	} catch (fehler) {
 		next(fehler)
 	}

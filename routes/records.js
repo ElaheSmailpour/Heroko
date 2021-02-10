@@ -18,12 +18,14 @@ const {
 
 let valideDatenRecord = [
 	// band: soll zeichenkette sein
-	check('band').not().isEmpty().withMessage('Band muss angegeben werden'),
+	// trim methode zu Bereinigung
+	// escape wandelt html Zeichen um: entfernt.
+	check('band').not().isEmpty().withMessage('Band muss angegeben werden').trim().blacklist('\$\{\}\<\>\&'),
 	// titel: soll zeichenkette sein
-	check('titel', 'Titel muss angegeben werden').not().isEmpty(),
+	check('titel', 'Titel muss angegeben werden').not().isEmpty().trim(),
 	// jahr: soll Nummer/Zahl sein
-	check('jahr', 'Jahr muss da sein').isNumeric(),
-	check('bild', 'Bild muss da sein').isURL()
+	check('jahr', 'Jahr muss da sein').trim().isNumeric(),
+	check('bild', 'Bild muss da sein').isURL().trim()
 ]
 
 router
