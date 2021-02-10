@@ -1,7 +1,8 @@
 // importiere das Model für records: 
 const Record = require('../models/recordmodel')
 const createError = require('http-errors')
-
+// funktion für die validierung: 
+const { validationResult } = require('express-validator')
 
 exports.recordsGetAllController = async (req, res, next) => {
 	try {
@@ -26,11 +27,20 @@ exports.recordsGetOneController = async (req, res, next) => {
 	}
 }
 
-// arbeitet schon mit Mongoose:
 exports.recordsPostController = async (req, res, next) => {
 	try {
-		const aufnahme = await Record.create(req.body)
-		res.status(200).send(aufnahme);
+		// validierung druchführen: 
+		const errors = validationResult(req)
+		// wenn fehler, dann schicke eine Fehlermeldung zurück: 
+		if(!errors.isEmpty()) {
+			// schicken wir eine fehlermeldung:
+			return res.status(422).json({
+				fehlerBeiValidierung: errors.array() 
+			})
+		} else {
+			const aufnahme = await Record.create(req.body)
+			res.status(200).send(aufnahme);
+		}
 	} catch (fehler) {
 		next(fehler)
 	}
