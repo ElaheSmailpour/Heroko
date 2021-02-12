@@ -20,7 +20,7 @@ let valideDatenRecord = [
 	// band: soll zeichenkette sein
 	// trim methode zu Bereinigung
 	// escape wandelt html Zeichen um: entfernt.
-	check('band').not().isEmpty().withMessage('Band muss angegeben werden').trim().blacklist('\$\{\}\<\>\&'),
+	check('band','Band muss angegeben werden').not().isEmpty().blacklist('\$\{\}\<\>\&').trim(),
 	// titel: soll zeichenkette sein
 	check('titel', 'Titel muss angegeben werden').not().isEmpty().trim(),
 	// jahr: soll Nummer/Zahl sein
