@@ -1,64 +1,75 @@
-// Recordsmodell importieren
-const Record = require('../models/recordmodel');
+// importiere das Model für records: 
+const Record = require('../models/recordmodel')
+const createError = require('http-errors')
+// funktion für die validierung: 
+const { validationResult } = require('express-validator')
 
-exports.alleRecords = (req, res, next) => {
-	Record.find().then(
-		(ergebnis) => {
-			res.status(200).send(ergebnis);
-		}
-	).catch( (fehler) => {
-		res.status(500).send("Fehler bei Record.find(): "+fehler);
-	});
+exports.recordsGetAllController = async (req, res, next) => {
+	try {
+		let aufnahmen = await Record.find()
+		res.status(200).send(aufnahmen)
+	} catch (error) {
+		next(error)
+	}
 }
 
-exports.erstelleRecord = (req, res, next) => {
-	//res.send("Eine neue Aufnahme im Bestand speichern.")
-	const aufnahme = req.body;
-
-	Record.create(aufnahme).then(
-		(ergebnis) => {
-			res.status(201).send(ergebnis);
-		}
-	).catch( (fehler) => {
-		res.status(500).send("Fehler bei Record.create(): "+fehler);
-	});
+exports.recordsGetOneController = async (req, res, next) => {
+	try {
+		const { id } = req.params;
+		let aufnahme = await Record.find({ _id: id })
+		// kommt keine eine aufnahme zurück?
+		if (aufnahme.length < 1) throw new Error()
+		res.status(200).send(aufnahme)
+	} catch (error) {
+		console.log(error);
+		let fehler = createError(404, `Die Aufnahme mit dem ID ${req.params.id} gibt es nicht`)
+		next(fehler)
+	}
 }
 
-exports.einRecord = (req, res, next) => {
-	// das Segment nach /records/ ist meine ID zum ändern
-	// z.b: localhost:3001/records/1235 => req.params.id = 1235
-	const { id } = req.params;
-
-	Record.find({_id: id}).then(
-		(ergebnis) => {
-			res.status(200).send(ergebnis);
-		}
-	).catch( (fehler) => {
-		res.status(500).send(`Fehler bei Record.find(_id: ${id}): `+fehler);
-	});
+exports.recordsPostController = async (req, res, next) => {
+	try {
+		// validierung durchführen: 
+		const errors = validationResult(req)
+		// wenn fehler, dann schicke eine Fehlermeldung zurück: 
+		if(!errors.isEmpty()) {
+			// schicken wir eine fehlermeldung:
+			return res.status(422).json({
+				fehlerBeiValidierung: errors.array() 
+			})
+		} 
+		const aufnahme = await Record.create(req.body)
+		res.status(200).send(aufnahme);
+		
+	} catch (fehler) {
+		next(fehler)
+	}
 }
 
-exports.aktualisiereRecord = (req, res, next) => {
-	// das Segment nach /records/ ist meine ID zum ändern
-	// z.b: localhost:3001/records/1235 => req.params.id = 1235
-	const { id } = req.params;
-	const geänderteWerte = req.body;
-
-	Record.findOneAndUpdate({_id: id}, geänderteWerte).then(
-		(ergebnis) => {
-			res.status(200).send(ergebnis);
-		}
-	).catch( (fehler) => {
-		res.status(500).send(`Fehler bei Record.findOneAndUpdate(_id: ${id}`+fehler);
-	});
+exports.recordsPutController = async (req, res, next) => {
+	try {
+		const { id } = req.params;
+		const geänderteWerte = req.body;
+		let antwort = await Record.updateOne({ _id: id }, { ...geänderteWerte })
+		res.status(200).send(antwort)
+	} catch (error) {
+		console.log(error);
+		let fehler = createError(404, `Konnte die Aufnahme mit dem ID ${req.params.id}  nicht updaten`)
+		next(fehler)
+	}
 }
 
-exports.löscheRecord = (req, res, next) => {
-
-	const { id } = req.params;
-	Record.deleteOne({_id : id}).then( (ergebnis) => {
-		res.status(200).send(ergebnis);
-	}).catch( (fehler) => {
-		res.status(500).send(`Fehler bei Record.deleteOne(_id: ${id}`+fehler);
-	})
+exports.recordsDeleteController = async (req, res, next) => {
+	try {
+		const { id } = req.params;
+		let antwort = await Record.deleteOne({ _id: id })
+		if (antwort.deletedCount > 0) {
+			res.status(200).send('erfolgreich gelöscht')
+		} else {
+			res.send('Es gab keinen Eintrag zum Löschen!')
+		}
+	} catch (error) {
+		let fehler = createError(404, `Konnte die Aufnahme mit dem ID ${req.params.id}  nicht löschen`)
+		next(fehler)
+	}
 }

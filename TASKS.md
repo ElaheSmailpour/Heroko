@@ -5,6 +5,41 @@ Sie ist zeitlich umgekehrt sortiert, also stehen die letzten / neusten Änderung
 So muss nicht immer bis ganz runter gescrollt werden.
 
 
+## Task 06 - Validierung und Sanitization ("Bereinigung/Harmonisieren")
+
+In dieser Aufgabe kümmern wir uns um zwei Aspekte der Datenpflege.
+Zunächst um die Validierung von Daten. Mit der stellen wir z.B. sicher, dass es sich bei Eingaben für bestimmte Felder auch um gültige Eingaben für den erwarteten Typ handelt. So wäre z.B. "http://dingdong.de" keine gültige E-mailadresse und "vier" oder 300.00,00.99 keine gültige Zahl.
+Wir werden hierfür das NPM Paket `express-validator` verwenden um unsere Daten zu prüfen, bevor wir etwas in die Datenbank schreiben.
+Wenn etwas nicht gültig ist, geben wir den Nutzern unserer API sinnvolle Fehlermeldungen.
+
+Die sog. Sanitization, die man wortwörtlich als Desinfektion oder Bereinigung übersetzbar ist, hingegen sorgt dafür dass Werte immer in einer gewünschten Form verwendet werden, auch wenn Alternativen möglich sind. z.B. das entfernen von Leerzeichen vor oder nach Nutzernamen, das grundsätzliche speichern von E-Mails und Internetadressen in kleinbuchstaben und derartige Dinge. Auch dafür hat das Paket `express-validator` Funktionen.
+
+**Die Schritte**
+
+1. Installe das Paket `express-validator` mit npm.
+2. Validiere die Daten für das Nutzer-Schema
+3. Wenn die Daten gültig sind säubere Sie auch (insbesondere das Email-Feld für den Nutzer)
+
+
+## Aufgabe 05 - mit Mongoose in die Controller
+
+In dieser Aufgabe werde nwir die Controller so umschreiben, dass sie über Mongoose mit MongoDB arbeiten. LowDB werden wir dabei los und entfernen es komplett aus unserem Server. Wir schauen uns an, wie die Datenbankverbindung aufgebaut wird und wie Daten mit Hilfe der Modell-Schemas geladen und gespeichert werden können. 
+Wir schauen uns auch MongoDB Compass an, um unsere Daten in einem grafischen Clienten anzusehen.
+
+**Die Schritte**:
+0. Bau die Datenbankverbindung zentral in deiner Express App ein. Protokolliere den Verbindungsaufbau oder eventuelle Fehler.
+
+1. Aktualisiere deine Controller so, dass sie die passenden Methoden von Mongoose-Modellen verwenden, um Daten zu verändern.
+2. Teste ob alle API Endpunkte für `records` richtig funktionieren.
+3. Wiederhole das für die Controller für `users` und `orders`
+
+**Tipps:**
+
+Importiere dein Mongoosemodell.
+Rufe am Modell die passenden Methoden auf (z.B. create(), find(), findOneAndUpdate(), deleteOne() oder andere )
+Du kannst sowohl die Callbackschreibweisen als auch die Promises verwenden. Wenn du magst nutze asynch/await um die Promiseschreibweise übersichtlich zu gestalten.
+
+
 ## Aufgabe 04 - Mongoose und Seeding
 
 Unter Seeding versteht man dass anfängliche Füllen einer neu eingerichteten Datenbank. (engl. für Sähen)
