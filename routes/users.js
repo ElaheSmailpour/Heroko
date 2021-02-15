@@ -3,7 +3,7 @@ const router = express.Router();
 const { check }  = require('express-validator')
 
 const {
-  alleNutzer, erstelleNutzer, einNutzer, aktualisiereNutzer, löscheNutzer 
+  alleNutzer, erstelleNutzerAsync, einNutzer, aktualisiereNutzer, löscheNutzer 
 } = require('../controller/users-controller');
 
 const validUser = [
@@ -62,7 +62,7 @@ const validUserUpdate = [
 router
     .route('/')
         .get(alleNutzer)
-        .post(validUser, erstelleNutzer)
+        .post(validUser, erstelleNutzerAsync)
         .put((req,res,next) => {
           res.status(422).send("bitte PUT auf /users/ nur mit _id");
         })
