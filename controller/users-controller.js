@@ -19,7 +19,7 @@ exports.alleNutzer = (req, res, next) => {
 // für POST /user
 exports.erstelleNutzer = (req, res, next) => {
 	const nutzer = req.body;
-	// validierung druchführen: 
+	// validierung durchführen: 
 	const errors = validationResult(req)
 	// wenn fehler, dann schicke eine Fehlermeldung zurück: 
 	if (!errors.isEmpty()) {

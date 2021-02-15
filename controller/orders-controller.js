@@ -1,62 +1,68 @@
-// Vereinheitlicht Datenbank
-const db = require('../db');
+// Importiere Order-Modell
+const Order = require('../models/ordermodel');
 
-exports.ordersGetAllController = (req, res, next) => {
+exports.alleOrders = (req, res, next) => {
 	//res.send('ich zeige alle Bestellungen des Ladens als Array');
-	const bestellungen = db
-	.get('orders')
-	.value()
-	res.status(200).send(bestellungen);
+	Order.find().then(
+		(ergebnis) => {
+			res.status(200).send(ergebnis);
+		}
+	).catch( (fehler) => {
+		res.status(500).send("Fehler bei Order.find(): "+fehler);
+	});
 }
 
-exports.ordersPostController = (req, res, next) => {
+exports.erstelleOrder = (req, res, next) => {
 	//res.send("Eine neue Bestellung speichern.")
 	const bestellung = req.body;
-	console.log("Body: ", req.body);
-	db
-		.get('orders')
-		.push(bestellung)
-		.last()
-		.assign({ id: Date.now().toString() })
-		.write()
-	res.status(200).send(bestellung);
+
+	Order.create(bestellung).then(
+		(ergebnis) => {
+			res.status(201).send(ergebnis);
+		}
+	).catch( (fehler) => {
+		res.status(500).send("Fehler bei Order.create(): "+fehler);
+	});
 }
 
-exports.ordersGetOneController = (req, res, next) => {
+exports.eineOrder = (req, res, next) => {
 	// id aus dem URL-Segment über destrukturierung rausholen.
 	const { id } = req.params;
-	//res.send('gebe nur das eine Bestellung zurück mit ID:' + id);
-	const bestellung = db
-		.get('orders')
-		.find({ id });
-	res.status(200).send(bestellung);
+
+	Order.find({_id: id}).then(
+		(ergebnis) => {
+			res.status(200).send(ergebnis);
+		}
+	).catch( (fehler) => {
+		res.status(500).send(`Fehler bei Order.find(_id: ${id}): `+fehler);
+	});
 }
 
-exports.ordersPutController = (req, res, next) => {
+exports.aktualisiereOrder = (req, res, next) => {
 	// das Segment nach /orders/ ist meine ID zum ändern
 	// z.b: localhost:3001/orders/1235 => req.params.id = 1235
 
 	// id aus dem URL-Segment über destrukturierung rausholen.
 	const { id } = req.params;
 	const neueWerte = req.body;
-	const bestellung = db
-		.get('orders')
-		.find({ id })
-		.assign(neueWerte)
-		.write();
-	res.status(200).send(bestellung);
-	//	res.send('ich ändere die Bestellung mit ID:' + id);
+
+	Order.findOneAndUpdate({_id: id}, neueWerte).then(
+		(ergebnis) => {
+			res.status(200).send(ergebnis);
+		}
+	).catch( (fehler) => {
+		res.status(500).send(`Fehler bei Order.findOneAndUpdate(_id: ${id}`+fehler);
+	});
+
 }
 
-exports.ordersDeleteController = (req, res, next) => {
+exports.löscheOrder = (req, res, next) => {
 	const { id } = req.params;
 	//res.send('ich lösche die Bestellung mit ID:' + id);
 
-	const order = db
-		.get('orders')
-		.remove({ id })
-		.write();
-	res.status(200).send(order);
+	Order.deleteOne({_id : id}).then( (ergebnis) => {
+		res.status(200).send(ergebnis);
+	}).catch( (fehler) => {
+		res.status(500).send(`Fehler bei Order.deleteOne(_id: ${id}`+fehler);
+	})
 }
-
-//module.exports = { ordersGetAllController, ordersPostController, ordersGetOneController, ordersPutController, ordersDeleteController };

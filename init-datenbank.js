@@ -2,13 +2,10 @@
 const faker = require("faker");
 // Das ist das Paket für die Verbindung mit MongoDB
 const mongoose = require("mongoose");
-
 // Hier holen wir das vorbereitete Modell für Nutzer.
 const User = require("./models/usermodel.js");
 
 console.log("Datenbank wird mit Demodaten befüllt");
-
-
 
 const uri = process.env.mongo || 'mongodb://localhost:27017/record-shop';
 
@@ -28,7 +25,7 @@ db.once('open', () => {
 	// die Methode gibt ein Promise zurück.
 	console.log("Versuche bisherige Nutzer löschen");
 	User.deleteMany({})
-		.then(() => { console.log("Nutzer sind gelöscht"); })
+		.then((ergebnis) => { console.log("Nutzer sind gelöscht", ergebnis); })
 		.catch((fehler) => { console.error("beim Löschen ging was schief:", fehler); });
 
 	const zufallsNutzer = [];
@@ -37,8 +34,8 @@ db.once('open', () => {
 		// Ich erstelle aus meinem Mongo-Schema ein Nutzerobjekt
 		const neuerNutzer = {
 			// Alle Werte, werden mit Hilfe vom Paket faker zufällig ausgewürfelt
-			vorName: faker.name.firstName(),
-			nachName: faker.name.lastName(),
+			vorname: faker.name.firstName(),
+			nachname: faker.name.lastName(),
 			email: faker.internet.email(),
 			passwort: faker.internet.password()
 		};
