@@ -3,7 +3,7 @@ const router = express.Router();
 const { check }  = require('express-validator')
 
 const {
-  alleNutzer, erstelleNutzerAsync, einNutzer, aktualisiereNutzer, löscheNutzer 
+  alleNutzer, erstelleNutzerAsync, einNutzer, aktualisiereNutzer, löscheNutzer, nutzerEinloggen, 
 } = require('../controller/users-controller');
 
 const validUser = [
@@ -75,5 +75,8 @@ router
         .get(einNutzer)
         .put(validUserUpdate,aktualisiereNutzer)
         .delete(löscheNutzer);
+ // Pfad für Nutzer einloggen:       
+router.route('/login').post(nutzerEinloggen)
+
 
 module.exports = router;

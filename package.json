@@ -16,6 +16,7 @@
     "express-validator": "^6.9.2",
     "faker": "^5.2.0",
     "http-errors": "^1.6.3",
+    "jsonwebtoken": "^8.5.1",
     "lowdb": "^1.0.0",
     "mongoose": "^5.11.14",
     "morgan": "~1.9.1"

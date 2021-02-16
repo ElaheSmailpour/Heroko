@@ -1,5 +1,6 @@
 const { validationResult } = require('express-validator')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 // Mongoose Modell zum Erstellen, Lesen, Aktualisieren, Löschen
 const User = require("../models/usermodel")
 
@@ -108,10 +109,10 @@ exports.aktualisiereNutzer = async (req, res, next) => {
 		if (nutzerDaten.passwort) {
 			// Ja: 
 			let hashPasswort = await bcrypt.hash(nutzerDaten.passwort, 10)
-			let nutzerNeu = await User.findOneAndUpdate({_id},{...nutzerDaten, passwort: hashPasswort })
+			let nutzerNeu = await User.findOneAndUpdate({ _id }, { ...nutzerDaten, passwort: hashPasswort })
 			return res.status(200).send(nutzerNeu)
 		} else {
-					// Nein:
+			// Nein:
 			let nutzerNeu = await User.findOneAndUpdate({ _id }, nutzerDaten)
 			return res.status(200).send(nutzerNeu)
 		}
@@ -136,3 +137,38 @@ exports.löscheNutzer = (req, res, next) => {
 		}
 	)
 }
+
+// funktion zum Loggin:
+
+exports.nutzerEinloggen = async (req, res, next) => {
+	let nutzer = req.body
+	try {
+		// gibt es den Nutzer? Wir suchen nach email
+		let userVonDatenbank = await User.findOne({ email: nutzer.email })
+		console.log(userVonDatenbank);
+		// wenn es kein Nutzer gibt: 
+		if (userVonDatenbank === null) {
+			return res.status(401).send('Du konntest nicht eingeloggt werden')
+		}
+		// wenn es den Nutzer gibt, dann vergleiche die Passwörter
+		let vergleichVonPasswort = await bcrypt.compare(nutzer.passwort, userVonDatenbank.passwort)
+		// wenn passwort korrekt ist:
+		if (vergleichVonPasswort) {
+// damit wir den Nutzer wiedererkennen, schicken wir eine Token zurück:
+// 3 parameter: objekt mit infos über den Nutzer, ein gehemniss, wie lange soll es gültig sein
+			let token = jwt.sign({
+				email: userVonDatenbank.email,
+				userId: userVonDatenbank._id,
+			}, 'ein Geheimniss', {expiresIn: '3h'})
+			res.status(200).json({
+				nachricht: 'Du bist eingeloggt',
+				token: token
+			})
+		} else {
+			res.status(401).send('Du konntest nicht eingeloggt werden')
+		}
+	} catch (error) {
+		res.status(401).send('Du konntest nicht eingeloggt werden')
+	}
+}
+
