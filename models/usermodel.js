@@ -6,7 +6,8 @@ const UserSchema = new Schema(
     vorname: String,
     nachname: String,
     email: String,
-    passwort: String
+    passwort: String,
+    admin: Boolean,
   }
 );
 

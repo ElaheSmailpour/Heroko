@@ -1,6 +1,8 @@
 /* Router für meine Musikaufnahmen. Basis Pfad /records/ (aus App.js) */
 const express = require('express');
 const router = express.Router();
+const admin = require('../middleware/admin')
+
  
 // wir importieren die Check Funktion von express validator:
 const { check } = require('express-validator')
@@ -25,13 +27,13 @@ let valideDatenRecord = [
 	check('titel', 'Titel muss angegeben werden').not().isEmpty().trim(),
 	// jahr: soll Nummer/Zahl sein
 	check('jahr', 'Jahr muss da sein').trim().isNumeric(),
-	check('bild', 'Bild muss da sein').isURL().trim()
 ]
 
 router
 	.route('/')
 	.get(recordsGetAllController)
-	.post(valideDatenRecord,recordsPostController)
+	// nur admin darf records hinzufügen
+	.post(admin,valideDatenRecord,recordsPostController)
 	// Antons Vorschlag bei PUT und DELETE ohne ID einen anderen Fehler als 404 zu geben.
 	.put((res, req,next) => {
 		res.status(422).send("PUT braucht eine ID im URL-Segment")
@@ -45,7 +47,7 @@ router
 	// das nächste URL Segment nach /router/ wird in einen Parameter namens id eingelesen
 	.route('/:id')
 	.get(recordsGetOneController)
-	.put(recordsPutController)
-	.delete(recordsDeleteController);
+	.put(admin,recordsPutController)
+	.delete(admin,recordsDeleteController);
 
 module.exports = router;

@@ -29,7 +29,8 @@ const validUser = [
     .isEmpty()
     .isStrongPassword()
     .withMessage('Passwort muss angegeben werden.')
-    .trim()
+    .trim(),
+    check('admin').optional().isBoolean()
 ];
 
 // Wir haben hier noch eine Array für die Validierung von PUT auf User/id. Mit der Methode optional
@@ -58,7 +59,8 @@ const validUserUpdate = [
     .optional()
     .isStrongPassword()
     .withMessage('Passwort muss angegeben werden.')
-    .trim()
+    .trim(),
+    check('admin').optional().isBoolean()
 ];
 
 router
