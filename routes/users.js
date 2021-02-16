@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { check }  = require('express-validator')
 
+const auth = require('../middleware/auth')
+
 const {
   alleNutzer, erstelleNutzerAsync, einNutzer, aktualisiereNutzer, löscheNutzer, nutzerEinloggen, 
 } = require('../controller/users-controller');
@@ -73,7 +75,8 @@ router
 router
     .route('/:_id')
         .get(einNutzer)
-        .put(validUserUpdate,aktualisiereNutzer)
+        // nur ein eingeloggter Nutzer soll seine eigenen Daten ändern können:
+        .put(auth,validUserUpdate,aktualisiereNutzer)
         .delete(löscheNutzer);
  // Pfad für Nutzer einloggen:       
 router.route('/login').post(nutzerEinloggen)

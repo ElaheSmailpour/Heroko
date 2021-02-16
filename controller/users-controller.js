@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken')
 // Mongoose Modell zum Erstellen, Lesen, Aktualisieren, Löschen
 const User = require("../models/usermodel")
 
-
 // für GET /user 
 exports.alleNutzer = (req, res, next) => {
 
@@ -97,6 +96,11 @@ exports.aktualisiereNutzer = async (req, res, next) => {
 	try {
 		const { _id } = req.params;
 		const nutzerDaten = req.body;
+		// Ist das ID im token, das selbe wie im Pfad?
+		// Wenn nicht: dann schick eine Antwort zurück:
+		if (_id !== req.tokenNutzer.userId) {
+			return res.status(401).send('Hier darfst du nichts ändern!')
+		}
 		const errors = validationResult(req)
 		// wenn fehler, dann schicke eine Fehlermeldung zurück: 
 		if (!errors.isEmpty()) {
@@ -155,11 +159,11 @@ exports.nutzerEinloggen = async (req, res, next) => {
 		// wenn passwort korrekt ist:
 		if (vergleichVonPasswort) {
 // damit wir den Nutzer wiedererkennen, schicken wir eine Token zurück:
-// 3 parameter: objekt mit infos über den Nutzer, ein gehemniss, wie lange soll es gültig sein
+// 3 parameter: Objekt mit infos über den Nutzer, ein Gehemnis, wie lange soll es gültig sein
 			let token = jwt.sign({
 				email: userVonDatenbank.email,
 				userId: userVonDatenbank._id,
-			}, 'ein Geheimniss', {expiresIn: '3h'})
+			}, process.env.JWT || 'ein Geheimnis', {expiresIn: '3h'})
 			res.status(200).json({
 				nachricht: 'Du bist eingeloggt',
 				token: token
