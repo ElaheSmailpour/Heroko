@@ -47,6 +47,42 @@ Dazu werden wir das Paket [`bcrypt`](https://www.npmjs.com/package/bcrypt) benut
 Bevor wir einen neuen Nutzer speichern, müssen wir das Passwort verschlüsseln. 
 Auch bei einem Update müssen wir sicherstellen, dass das Passwort nicht im Klartext gespeichert wird. 
 
+### Aufgabe 8-2: Nun soll der Nutzer sich einloggen können. 
+
+Scheibe eine Route `users/login`. Wenn der Nutzer auf diese Route geht, soll geprüft werden, ob der Nutzer schon vorhanden ist (im Datenbank). 
+Installiere das Paket [JSONwebtoken](https://www.npmjs.com/package/jsonwebtoken) mit `npm install jsonwebtoken`.
+Wenn ja, dann verwende [JSON Web Token](https://de.wikipedia.org/wiki/JSON_Web_Token), um ein Token zurückzuschicken zu dem eingeloggten Nutzer. 
+Mit Hilfe von diesem Token werden wir nun entscheiden, was der Nutzer machen darf.
+Dieses Token wird in jeder Anfrage mitgeschickt und beinhaltet das, was wir eingeben. Im Beispiel haben wir Email und Id hinzugefügt.
+
+Erlaube nun einem Nutzer, der als sich eingeloggt hat, seine eigenen Daten zu löschen.
+
+Hierfür brauchen wir eine Middleware, in dem das Token decodiert wird und deren Inhalt zu dem Request hinzugefügt wird. 
+Im nächsten Schritt fügen wir diese Middleware auf dem Pfad `users/:id` hinzu, nur bei der PUT Methode. 
+
+Um zu prüfen, ob alles klappt gehe wie folgt vor:
+
+- a. Erstelle einen Nutzer und logge diesen Nutzer ein.
+- b. Schicke einen PUT- Request, in dem du für diesen Nutzer etwas änderst, z.B. in Body des Requests fügst du ein Feld für den Vornamen mit einem neuen Wert hinzu. Zu dem Header dieser Anfrage musst du nun auch ein Feld `Authorization` (die richtige Schreibweise ist wichtig!) mit dem Wert `Bearer <DAS_TOKEN>` hinzufügen. (engl. to bear = tragen/ertragen/erdulden)
+- c. In der Controller-Funktion für Update, muss du nun prüfen, ob die ID in der URL dieselbe ist wie im Token. Wenn ja, dann führen wir den Update aus. Wenn nicht, dann schicke eine Antwort zurück mit dem Status 401 und ein Text, z.B.  "Das darfst du nicht!"
+
+- Wiederhole diese Aufgaben für `users/:id` und die Methode DELETE.
+
+
+### Aufgabe 8-3: Erstelle ein Nutzer, der auch Admin ist. 
+
+Nur der Admin darf PUT, POST und DELETE auf `/records` machen!
+Wir könnten uns das im Datenmodell der Nutzer als Feld istAdmin (true/false) speichern.
+Hierfür können wir eine neue Middleware scheiben, in dem sofort entschieden wird, ob den Nutzer Admin ist und weiter gehen darf, oder einen Fehler wirft.
+
+## Nutzer 'einloggen' bei Postman:
+Mit Postman arbeiten, um einen eingeloggten Nutzer zu simulieren : 
+
+1. Erstelle einen neuen Nutzer.
+2. Logg den Nutzer ein.
+3. Kopier das Token, das du in der Antwort von Loggin zurückbekommst.
+4. Füge das Token ein in **Headers** bei Postman in einer Header mit dem Namen `authorization` und als Wert `Bearer <deinToken>`
+
 ## Aufgabe 07 - Beziehungen (relations)
 
 MongoDB ist eine NoSQL Datenbank, heißt sie ist nicht relational (auf Relationen/Beziehungen basiert), neben anderen Dingen. Um eine Art von Beziehungen zwischen Dokumenten herzustellen, werden Referenzen entlang von IDs benutzt, oder Dokumente direkt in andere eingebettet. In dieser Aufgabe erweitern wir unsere Datenmodelle um Beziehungen zwischen ihnen herzustellen. Wir können sehen, dass eine Bestellung eine Referenz auf Aufnahmen hat, aber wenn wir eine Bestellung aus der Datenbank laden sehen wir bisher nur die ID der Aufnahme, aber nicht die Daten der Aufnahme (Band, Titel, Jahr) selbst. 
