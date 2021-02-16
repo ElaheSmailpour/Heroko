@@ -77,7 +77,8 @@ router
         .get(einNutzer)
         // nur ein eingeloggter Nutzer soll seine eigenen Daten ändern können:
         .put(auth,validUserUpdate,aktualisiereNutzer)
-        .delete(löscheNutzer);
+         // nur ein eingeloggter Nutzer soll seine eigenen Daten ändern können:
+        .delete(auth,löscheNutzer);
  // Pfad für Nutzer einloggen:       
 router.route('/login').post(nutzerEinloggen)
 
