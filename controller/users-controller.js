@@ -112,7 +112,7 @@ exports.aktualisiereNutzer = async (req, res, next) => {
 			return res.status(200).send(nutzerNeu)
 		} else {
 					// Nein:
-			let nutzerNeu = await User.findOneAndUpdate({ _id }, nutzerDaten, { new: true, upsert: true })
+			let nutzerNeu = await User.findOneAndUpdate({ _id }, nutzerDaten)
 			return res.status(200).send(nutzerNeu)
 		}
 
