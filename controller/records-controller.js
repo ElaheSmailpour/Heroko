@@ -29,7 +29,7 @@ exports.recordsGetOneController = async (req, res, next) => {
 
 exports.recordsPostController = async (req, res, next) => {
 	try {
-		// validierung druchführen: 
+		// validierung durchführen: 
 		const errors = validationResult(req)
 		// wenn fehler, dann schicke eine Fehlermeldung zurück: 
 		if(!errors.isEmpty()) {

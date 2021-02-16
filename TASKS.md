@@ -4,6 +4,64 @@ Diese Datei enthält die Liste der Änderungen, die in jeder Phase gemacht werde
 Sie ist zeitlich umgekehrt sortiert, also stehen die letzten / neusten Änderungen oben in der Datei. 
 So muss nicht immer bis ganz runter gescrollt werden.
 
+## Aufgabe 08 - Sicherheit
+
+Unser Server arbeitet ganz gut bisher, aber er ist alles andere als Sicher. Jeder kann Konten anderer Nutzer löschen mit deren IDs, passwörter sind lesbar so, dass sie einfach kompromittiert werden können und es gibt nirgendwo Sicherheit. 
+Wir werden eine Authentifizierung einführen für jede Anfrage indem wir [JSON Web Tokens](https://de.wikipedia.org/wiki/JSON_Web_Token) verwenden. So dass jeder Nutzer nur seine eigenen Informationen ändern kann. Außerdem führen wir Rollen für unsere Nutzer ein. Wir werden eine Administrator Rolle haben und eine Nutzer-Rolle und deren Rechte festlegen.
+
+Die Rechte sollen so aussehen:
+
+**Nicht eingeloggte Kunde:** 
+(Diese Pfade sind für alle Offen)
+- Records
+    - GET
+- Records/id
+    - GET
+- Users: 
+    - POST
+- Users/login
+    - POST
+
+**Nur Eingeloggte Kunden Rolle**
+
+- Users/id
+    - nur bei eigener ID: 
+  - GET/PUT/DELETE.
+
+**Nur Administrator Rolle**
+
+- Records
+  - POST
+- Records/id
+    - PUT/DELETE
+- Users: 
+    - GET
+
+**Schritte**
+
+### Aufgabe 8-1: Verschlüssele dein Passwort! 
+
+Speichere das Passwort nicht im Klartext, sondern als Hash (Streuwert) mit einem Salt währen der Nutzer erstellt wird.
+
+Dazu werden wir das Paket [`bcrypt`](https://www.npmjs.com/package/bcrypt) benutzen. Die muss zuerst installiert werden `npm install bcrypt`. 
+Bevor wir einen neuen Nutzer speichern, müssen wir das Passwort verschlüsseln. 
+Auch bei einem Update müssen wir sicherstellen, dass das Passwort nicht im Klartext gespeichert wird. 
+
+## Aufgabe 07 - Beziehungen (relations)
+
+MongoDB ist eine NoSQL Datenbank, heißt sie ist nicht relational (auf Relationen/Beziehungen basiert), neben anderen Dingen. Um eine Art von Beziehungen zwischen Dokumenten herzustellen, werden Referenzen entlang von IDs benutzt, oder Dokumente direkt in andere eingebettet. In dieser Aufgabe erweitern wir unsere Datenmodelle um Beziehungen zwischen ihnen herzustellen. Wir können sehen, dass eine Bestellung eine Referenz auf Aufnahmen hat, aber wenn wir eine Bestellung aus der Datenbank laden sehen wir bisher nur die ID der Aufnahme, aber nicht die Daten der Aufnahme (Band, Titel, Jahr) selbst. 
+
+Wir schauen uns die Beziehung "1 zu vielen" zwischen unseren Modellen (ein Album kann in vielen Bestellungen enthalten sein) an und die 1-zu-1-Beziehung zwischen Nutzern und ihren Adressen.
+
+**Hintergrund** Unser Kunde, der Musikladen, will zu jedem Nutzer eine Adresse in einem bestimmten Format speichern. Und er möchte die Daten von Aufnahmen bei Abruf von Bestellungen sehen, um den Einkaufskorb sinnvoll anzuzeigen.
+
+**Schritte:**
+
+1. Erstelle ein neues Schema für ein Modell der Adresse, es soll Straße und Stadt enthalten.
+2. Verbinde das Adressmodell mit dem Nutzermodell über eine 1-zu-1 Beziehung.
+3. Aktualisiere die Controller so, dass beim erstellen/löschen/ändern/abfragen von Nutzern auch eine Adresse erstellt/gelöscht/geändert/abgefragt wird.
+4. Benutze Referenzen, um Aufnahmen und Bestellungen in eine 1-zu-viele Beziehung zu setzen.
+
 
 ## Task 06 - Validierung und Sanitization ("Bereinigung/Harmonisieren")
 

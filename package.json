@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "watch": "nodemon ./bin/www",
-    "füttern": "node ./datenpflanzen.js"
+    "dbinit": "node ./init-datenbank.js"
   },
   "dependencies": {
     "bcrypt": "^5.0.0",
@@ -23,10 +23,5 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.7"
-  },
-  "nodemonConfig": {
-    "ignore": [
-      "data.json"
-    ]
   }
 }

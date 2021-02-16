@@ -2,11 +2,11 @@
 const express = require('express');
 const router = express.Router();
  
-// wir importieren die Check Funktion von express vaildator:
+// wir importieren die Check Funktion von express validator:
 const { check } = require('express-validator')
 
 const {
-	recordsGetAllController,
+    recordsGetAllController,
 	recordsPostController,
 	recordsPutController,
 	recordsDeleteController,
@@ -31,7 +31,14 @@ let valideDatenRecord = [
 router
 	.route('/')
 	.get(recordsGetAllController)
-	.post(valideDatenRecord,recordsPostController);
+	.post(valideDatenRecord,recordsPostController)
+	// Antons Vorschlag bei PUT und DELETE ohne ID einen anderen Fehler als 404 zu geben.
+	.put((res, req,next) => {
+		res.status(422).send("PUT braucht eine ID im URL-Segment")
+	})
+	.delete((res, req, next) => {
+		res.status(422).send("DELETE braucht eine ID im URL-Segment")
+	})
 
 router
 	// Hier definieren wir ein Stück Route mit Parameter.
